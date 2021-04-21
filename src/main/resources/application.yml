@@ -1,2 +1,24 @@
 server:
   port: 8081
+
+spring:
+  datasource:
+    url: jdbc:h2:~/test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        #        show_sql: ture
+        format_sql: true
+        # 여러개 쿼리 나가야할 것을 in으로 한번에 가져옴
+        default_batch_fetch_size: 100
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
