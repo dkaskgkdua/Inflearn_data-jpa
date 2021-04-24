@@ -13,6 +13,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,9 @@ class MemberRepositoryTest {
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     public void testMember() {
@@ -209,7 +214,7 @@ class MemberRepositoryTest {
     }
 
 
-        @Test
+    @Test
     public void slice() {
         //given
         memberRepository.save(new Member("member1", 10));
@@ -237,6 +242,34 @@ class MemberRepositoryTest {
 
     }
 
+    @Test
+    public void bulkUpdate() {
+        //given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 12));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+
+        int resultCount = memberRepository.bulkAgePlus(20);
+        /**
+         * 벌크연산은 바로 db에게 날리기 때문에
+         * 영속성 컨텍스트를 이를 모르게 된다.
+         * 그래서 불일치 현상이 생기는데
+         * 이땐 엔티티매니저를 비워주자.
+         *
+         * 혹은 repository에 아래를 추가
+         * @Modifying(clearAutomatically = true)
+         */
+//        entityManager.flush();
+//        entityManager.clear();
+
+        List<Member> result = memberRepository.findListByUsername("member5");
+        Member member = result.get(0);
+
+        assertThat(resultCount).isEqualTo(3);
+    }
 
 
-}
+
+    }
