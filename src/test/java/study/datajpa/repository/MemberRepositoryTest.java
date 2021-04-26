@@ -298,6 +298,31 @@ class MemberRepositoryTest {
         }
     }
 
+    /**
+     * QueryHint 사용!
+     * 성능최적화를 위해 스냅샷을 안함
+     * 밑의 테스트코드에서 member2 변경 안됨
+     */
+    @Test
+    public void queryHint() {
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
 
+        Member member = memberRepository.findReadOnlyByUsername("member1");
+        member.setUsername("member2");
 
+        em.flush();
+    }
+
+    @Test
+    public void lock() {
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        List<Member> result = memberRepository.findLockByUsername("member1");
+    }
 }
