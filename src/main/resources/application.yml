@@ -17,7 +17,15 @@ spring:
         format_sql: true
         # 여러개 쿼리 나가야할 것을 in으로 한번에 가져옴
         default_batch_fetch_size: 100
-
+#        page 설정
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
+#        1부터 시작  -> Page 객체에 정보는 0으로 쭉 감...
+#        0부터 쓰거나 아니면 Page 객체를 커스텀 해야함
+#        one-indexed-parameters: true
 logging:
   level:
     org.hibernate.SQL: debug
